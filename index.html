@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ULTRAKILL Википедия</title>
+    <style>
+        :root {
+            --page-bg: #f8f9fa;
+            --content-bg: #ffffff;
+            --text: #202122;
+            --muted: #54595d;
+            --border: #a2a9b1;
+            --soft-border: #eaecf0;
+            --link: #0645ad;
+            --link-hover: #0b53c2;
+            --infobox-bg: #f8f9fa;
+            --heading: #202122;
+            --accent: #d33;
+            --tab-bg: #f3f3f3;
+            --shadow: rgba(0, 0, 0, 0.08);
+        }
+
+        [data-theme="dark"] {
+            --page-bg: #101418;
+            --content-bg: #1b1f24;
+            --text: #e6e9ee;
+            --muted: #b7bdc5;
+            --border: #4d545d;
+            --soft-border: #2f363f;
+            --link: #7aa2ff;
+            --link-hover: #9bbdff;
+            --infobox-bg: #181d22;
+            --heading: #f8f9fa;
+            --accent: #ff5a5a;
+            --tab-bg: #1a1f24;
+            --shadow: rgba(0, 0, 0, 0.25);
+        }
+
+        * {
+            box-sizing: border-box;
+            transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            background: var(--page-bg);
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            line-height: 1.7;
+            padding: 30px 16px;
+        }
+
+        .container {
+            max-width: 1180px;
+            margin: 0 auto;
+            background: var(--content-bg);
+            border: 1px solid var(--border);
+            box-shadow: 0 0 0 1px rgba(255,255,255,0.2), 0 8px 26px var(--shadow);
+        }
+
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 18px 22px 12px;
+            border-bottom: 1px solid var(--soft-border);
+        }
+
+        .page-header h1 {
+            margin: 0;
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: clamp(2.2rem, 4vw, 3.1rem);
+            font-weight: normal;
+            line-height: 1.2;
+            letter-spacing: 0.02em;
+        }
+
+        .theme-toggle {
+            border: 1px solid var(--border);
+            background: var(--infobox-bg);
+            color: var(--text);
+            border-radius: 4px;
+            padding: 8px 14px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 1px rgba(211, 51, 51, 0.1);
+        }
+
+        .tabs-nav {
+            display: flex;
+            flex-wrap: wrap;
+            list-style: none;
+            margin: 0;
+            padding: 0 22px;
+            border-bottom: 1px solid var(--border);
+            background: rgba(0,0,0,0.01);
+        }
+
+        .tab-link {
+            padding: 10px 18px;
+            margin: 0 4px -1px 0;
+            border: 1px solid transparent;
+            border-bottom: none;
+            background: var(--tab-bg);
+            color: var(--link);
+            cursor: pointer;
+            font-size: 0.95rem;
+            border-top-left-radius: 4px;
+            border-top-right-radius: 4px;
+            font-weight: 600;
+        }
+
+        .tab-link.active {
+            background: var(--content-bg);
+            border-color: var(--border);
+            color: var(--text);
+        }
+
+        .tab-content {
+            display: none;
+            padding: 28px 22px 30px;
+            animation: fadeIn 0.25s ease;
+        }
+
+        .tab-content.active {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 330px;
+            gap: 28px;
+        }
+
+        .main-text {
+            min-width: 0;
+        }
+
+        .main-text p,
+        .main-text li {
+            font-size: 1rem;
+        }
+
+        .main-text h2,
+        .main-text h3 {
+            font-family: Georgia, "Times New Roman", serif;
+            color: var(--heading);
+            font-weight: normal;
+            border-bottom: 1px solid var(--border);
+            margin: 24px 0 12px;
+            padding-bottom: 4px;
+            line-height: 1.3;
+        }
+
+        .main-text h2 {
+            font-size: clamp(1.6rem, 2vw, 2.2rem);
+        }
+
+        .main-text h3 {
+            font-size: 1.45rem;
+        }
+
+        .lead {
+            font-size: 1.05rem;
+        }
+
+        .main-text ul,
+        .main-text ol {
+            padding-left: 22px;
+            margin: 10px 0 16px;
+        }
+
+        .main-text ul li {
+            margin-bottom: 4px;
+        }
+
+        .main-text a,
+        .infobox a {
+            color: var(--link);
+            text-decoration: none;
+        }
+
+        .main-text a:hover,
+        .infobox a:hover {
+            color: var(--link-hover);
+            text-decoration: underline;
+        }
+
+        .infobox {
+            align-self: start;
+            background: var(--infobox-bg);
+            border: 1px solid var(--border);
+            font-size: 0.9rem;
+            padding: 0;
+        }
+
+        .infobox-title {
+            padding: 10px 12px;
+            text-align: center;
+            font-weight: 700;
+            background: #eaecf0;
+            color: #202122;
+            border-bottom: 1px solid var(--border);
+        }
+
+        [data-theme="dark"] .infobox-title {
+            background: #2a2f38;
+            color: var(--heading);
+        }
+
+        .infobox-image {
+            margin: 14px 12px 10px;
+            min-height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(211,51,51,0.12), rgba(0,0,0,0.02));
+            border: 1px dashed var(--accent);
+            color: var(--muted);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-size: 0.8rem;
+            text-align: center;
+            padding: 12px;
+        }
+
+        .infobox-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.92rem;
+        }
+
+        .infobox-table th,
+        .infobox-table td {
+            padding: 8px 10px;
+            border-top: 1px solid var(--border);
+            vertical-align: top;
+            text-align: left;
+        }
+
+        .infobox-table th {
+            width: 38%;
+            font-weight: 700;
+        }
+
+        .history-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .history-list li {
+            padding: 12px 14px 12px 16px;
+            margin-bottom: 12px;
+            background: var(--infobox-bg);
+            border-left: 4px solid var(--accent);
+            border-top: 1px solid var(--soft-border);
+            border-right: 1px solid var(--soft-border);
+            border-bottom: 1px solid var(--soft-border);
+        }
+
+        .history-date {
+            color: var(--accent);
+            font-weight: 700;
+            margin-right: 10px;
+        }
+
+        .related-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-top: 14px;
+        }
+
+        .related-card {
+            background: var(--infobox-bg);
+            border: 1px solid var(--border);
+            padding: 14px 16px;
+        }
+
+        .related-card h3 {
+            margin: 0 0 8px;
+            font-size: 1.3rem;
+            color: var(--accent);
+            border: none;
+            padding: 0;
+        }
+
+        .article-meta {
+            color: var(--muted);
+            font-size: 0.9rem;
+            margin: 0 0 16px;
+        }
+
+        .mini-quote {
+            border-left: 4px solid var(--accent);
+            padding-left: 12px;
+            color: var(--muted);
+            font-style: italic;
+            margin: 12px 0;
+        }
+
+        @media (max-width: 840px) {
+            .tab-content.active {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 540px) {
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .tabs-nav {
+                padding: 0 12px;
+            }
+
+            .tab-content {
+                padding-left: 12px;
+                padding-right: 12px;
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header class="page-header">
+        <h1>ULTRAKILL</h1>
+        <button class="theme-toggle" id="themeToggle" type="button">Изменить стиль</button>
+    </header>
+
+    <ul class="tabs-nav" aria-label="Навигация по разделам">
+        <li class="tab-link active" data-tab="article">Статья</li>
+        <li class="tab-link" data-tab="history">История</li>
+        <li class="tab-link" data-tab="related">Связанные статьи</li>
+    </ul>
+
+    <main>
+        <section id="article" class="tab-content active">
+            <article class="main-text">
+                <p class="article-meta">Вымышленная вселенная · Шутер от первого лица · Indie game</p>
+                <p class="lead"><strong>ULTRAKILL</strong> — это шутер от первого лица, разработанный Арси «Hakita» Патала и изданный <a href="https://ru.wikipedia.org/wiki/New_Blood_Interactive" target="_blank" rel="noopener">New Blood Interactive</a>. Игра сочетает в себе скоростной геймплей классических боевиков и современный дизайн уровней, в котором игрок постоянно вынужден искать баланс между скоростью, точностью и стилем.</p>
+
+                <p>Сюжет разворачивается в мрачном будущем, где человечество исчезло, а на месте его цивилизации осталась огромная система уровней, напоминающая преисподнюю. Главный герой, робот <b>V1</b>, спускается в Ад в поисках крови — источника жизненной силы, способной восстанавливать его корпус и усиливать боевые способности.</p>
+
+                <div class="mini-quote">«Не просто выжить. Уничтожить, уклониться, заглотить кровь и продолжать идти вперёд».</div>
+
+                <h2>Игровой процесс</h2>
+                <p>Основной особенностью ULTRAKILL является темп. Игра рассчитана на агрессивный стиль игры: игрок постоянно двигается, стреляет, прыгает и цепляет комбо. Врагов можно уничтожать разными типами оружия, а за каждый удачно выполненный набор атак начисляются очки стиля. Чем разнообразнее и быстрее combo, тем выше рейтинг: от обычного уничтожения до награды <b>ULTRAKILL</b>.</p>
+
+                <p>В арсенале героя представлены различные виды оружия: плазменная винтовка, ракетная установка, дробовик, меч и другие инструменты, дающие возможность гибко реагировать на боевые ситуации. Дополнительно присутствует система маневра — воздушные прыжки, ускорения, уклонения, а также мгновенные перемещения, которые помогают поддерживать темп и обходить угрозы.</p>
+
+                <h2>Сюжет и вселенная</h2>
+                <p>Вселенная ULTRAKILL построена вокруг идеи цикличного падения в Ад. V1 — один из многих машин, созданных для истребления сил зла, но по мере продвижения становится очевидным, что его путь не ограничивается простым уничтожением. В игре присутствуют боги, демоны, искорёженные машины и необычные сущности, каждая из которых отражает эстетику жестокого, полу-металлического, полу-духовного мира.</p>
+
+                <p>Кампания разделена на несколько актов и уровней, раскрывающих отдельные части истории. Каждый акт связан с особой темой, идеей и моральной нагрузкой, а визуальный дизайн ищет баланс между яркой неоновой палитрой и мрачной религиозной символикой.</p>
+
+                <h2>Структура кампании</h2>
+                <ul>
+                    <li><b>Prelude: Overture</b> — вступительная часть, знакомящая с основами маневренного боя.</li>
+                    <li><b>Act I: Infinite Hyperdeath</b> — первые слои Ада, где игрок осваивает механику скоростного выживания.</li>
+                    <li><b>Act II: Imperfect Hatred</b> — более сложные локации, усиленные враги и новые механики.</li>
+                    <li><b>Act III: Godfist Suicide</b> — финальные уровни, где темп и сложность достигают максимума.</li>
+                </ul>
+
+                <h2>Разработка и отзывы</h2>
+                <p>Игра была создана в основном силами одного разработчика — Арси Патала, известного как Hakita. Проект привлёк внимание благодаря визуальной динамике, высокому темпу и глубокой системе комбо, а также репутации одного из самых дерзких инди-шутеров современности. Положительные отзывы были обусловлены сочетанием классического геймдизайна и сильной стилистики.</p>
+            </article>
+
+            <aside class="infobox" aria-label="Информационная таблица">
+                <div class="infobox-title">ULTRAKILL</div>
+                <div class="infobox-image">Game Artwork</div>
+                <table class="infobox-table">
+                    <tr>
+                        <th>Разработчик</th>
+                        <td>Арси «Hakita» Патала</td>
+                    </tr>
+                    <tr>
+                        <th>Издатель</th>
+                        <td><a href="https://ru.wikipedia.org/wiki/New_Blood_Interactive" target="_blank" rel="noopener">New Blood Interactive</a></td>
+                    </tr>
+                    <tr>
+                        <th>Платформа</th>
+                        <td>Windows</td>
+                    </tr>
+                    <tr>
+                        <th>Дата выхода</th>
+                        <td>3 сентября 2020</td>
+                    </tr>
+                    <tr>
+                        <th>Жанр</th>
+                        <td>Шутер от первого лица</td>
+                    </tr>
+                    <tr>
+                        <th>Режим</th>
+                        <td>Одиночная игра</td>
+                    </tr>
+                    <tr>
+                        <th>Рейтинг</th>
+                        <td>PEGI 18</td>
+                    </tr>
+                </table>
+            </aside>
+        </section>
+
+        <section id="history" class="tab-content">
+            <div class="main-text" style="grid-column: 1 / -1;">
+                <h2>История разработки</h2>
+                <p>ULTRAKILL изначально появилась как проект, вдохновленный классическими шутерами и эстетикой жесткого, почти божественного насилия в игровых уровнях. На ранних этапах разработки проект получил широкую популярность благодаря демонстрациям скорости, агрессивного дизайна и акценту на стиль боя.</p>
+
+                <ul class="history-list">
+                    <li><span class="history-date">2020</span><strong>Премьера в раннем доступе:</strong> игра вышла в Steam Early Access, сразу привлекая внимание своей скоростью и чистым управлением.</li>
+                    <li><span class="history-date">2021</span><strong>Расширение контента:</strong> добавлены новые зоны, враги и функции, усиливающие глубину геймплея.</li>
+                    <li><span class="history-date">2022</span><strong>Завершение ключевых актов:</strong> в проекте появились более сложные уровни, дополнительные бои и расширение сюжетной линии.</li>
+                    <li><span class="history-date">2023+</span><strong>Развитие экосистемы и культовой популярности:</strong> игра закрепилась как один из главных современных примеров стилистического шутера.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="related" class="tab-content">
+            <div class="main-text" style="grid-column: 1 / -1;">
+                <h2>Похожие игры и связанные темы</h2>
+                <p>Среди ближайших по духу проектов можно выделить шутеры, построенные на скорости, агрессии и системе оценки навыка. ULTRAKILL часто сравнивают с играми, где движение и бой — это единый механический ритм.</p>
+
+                <div class="related-grid">
+                    <div class="related-card">
+                        <h3>Doom</h3>
+                        <p>Классический представитель жанра, чья философия быстрого и жестокого боёвки оказала сильное влияние на дизайн ULTRAKILL.</p>
+                    </div>
+                    <div class="related-card">
+                        <h3>Devil May Cry</h3>
+                        <p>Серия, известная системой оценивания стиля, стала важным вдохновением для механики комбо и рейтинга.</p>
+                    </div>
+                    <div class="related-card">
+                        <h3>DUSK</h3>
+                        <p>Дерзкий ретро-шутер, также работающий в духе старых боевиков и мрачной атмосферы.</p>
+                    </div>
+                    <div class="related-card">
+                        <h3>Quake</h3>
+                        <p>Одно из важнейших влияний на физику движения, темп и динамику боя в жанре.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<script>
+    const tabs = document.querySelectorAll('.tab-link');
+    const contents = document.querySelectorAll('.tab-content');
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            tabs.forEach(item => item.classList.remove('active'));
+            contents.forEach(content => content.classList.remove('active'));
+
+            tab.classList.add('active');
+            const target = document.getElementById(tab.dataset.tab);
+            if (target) {
+                target.classList.add('active');
+            }
+        });
+    });
+
+    const themeToggle = document.getElementById('themeToggle');
+    themeToggle.addEventListener('click', () => {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        if (currentTheme === 'dark') {
+            document.documentElement.removeAttribute('data-theme');
+        } else {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        }
+    });
+</script>
+
+</body>
+</html>
